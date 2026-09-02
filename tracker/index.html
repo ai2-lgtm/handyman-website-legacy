@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Handyman.ae — Execution Tracker</title>
+<style>
+:root {
+--done: #16a34a;
+--in-progress: #d97706;
+--not-started: #6b7280;
+--bg: #f8fafc;
+--card: #ffffff;
+--border: #e2e8f0;
+--text: #1e293b;
+--text-light: #64748b;
+--accent: #0ea5e9;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+background: var(--bg);
+color: var(--text);
+line-height: 1.6;
+padding: 0;
+}
+
+/* ── Login Screen ── */
+#login-screen {
+display: flex;
+align-items: center;
+justify-content: center;
+min-height: 100vh;
+background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+padding: 1rem;
+}
+.login-card {
+background: #fff;
+border-radius: 14px;
+padding: 2.5rem 2rem;
+width: 100%;
+max-width: 380px;
+box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+.login-logo {
+text-align: center;
+margin-bottom: 1.75rem;
+}
+.login-logo h2 {
+font-size: 1.3rem;
+font-weight: 700;
+color: #0f172a;
+letter-spacing: -0.02em;
+}
+.login-logo p {
+font-size: 0.8rem;
+color: var(--text-light);
+margin-top: 0.2rem;
+}
+.login-field {
+margin-bottom: 1rem;
+}
+.login-field label {
+display: block;
+font-size: 0.8rem;
+font-weight: 600;
+color: var(--text);
+margin-bottom: 0.35rem;
+}
+.login-field input {
+width: 100%;
+padding: 0.65rem 0.85rem;
+border: 1.5px solid var(--border);
+border-radius: 8px;
+font-size: 0.9rem;
+color: var(--text);
+outline: none;
+transition: border-color 0.15s;
+}
+.login-field input:focus {
+border-color: var(--accent);
+}
+.login-btn {
+width: 100%;
+padding: 0.75rem;
+background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+color: #fff;
+border: none;
+border-radius: 8px;
+font-size: 0.95rem;
+font-weight: 600;
+cursor: pointer;
+margin-top: 0.5rem;
+transition: opacity 0.15s;
+}
+.login-btn:hover { opacity: 0.88; }
+.login-error {
+display: none;
+color: #dc2626;
+font-size: 0.8rem;
+text-align: center;
+margin-top: 0.75rem;
+}
+
+/* ── Tracker (hidden until auth) ── */
+#tracker-screen { display: none; }
+
+.header {
+background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+color: #fff;
+padding: 2rem 1.5rem;
+text-align: center;
+position: sticky;
+top: 0;
+z-index: 100;
+box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.header h1 {
+font-size: 1.6rem;
+font-weight: 700;
+letter-spacing: -0.02em;
+margin-bottom: 0.25rem;
+}
+.header p {
+font-size: 0.85rem;
+opacity: 0.7;
+}
+.logout-btn {
+position: absolute;
+right: 1.25rem;
+top: 50%;
+transform: translateY(-50%);
+background: rgba(255,255,255,0.12);
+border: 1px solid rgba(255,255,255,0.25);
+color: #fff;
+padding: 0.3rem 0.75rem;
+border-radius: 6px;
+font-size: 0.75rem;
+cursor: pointer;
+transition: background 0.15s;
+}
+.logout-btn:hover { background: rgba(255,255,255,0.22); }
+.summary-bar {
+display: flex;
+justify-content: center;
+gap: 1.5rem;
+padding: 1rem 1.5rem;
+background: var(--card);
+border-bottom: 1px solid var(--border);
+flex-wrap: wrap;
+}
+.summary-item {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+font-size: 0.85rem;
+font-weight: 600;
+}
+.dot {
+width: 10px;
+height: 10px;
+border-radius: 50%;
+display: inline-block;
+}
+.dot-done { background: var(--done); }
+.dot-ip { background: var(--in-progress); }
+.dot-ns { background: var(--not-started); }
+.progress-container {
+padding: 1rem 1.5rem;
+background: var(--card);
+border-bottom: 1px solid var(--border);
+}
+.progress-bar-bg {
+width: 100%;
+height: 8px;
+background: #e2e8f0;
+border-radius: 4px;
+overflow: hidden;
+}
+.progress-bar-fill {
+height: 100%;
+border-radius: 4px;
+transition: width 0.3s;
+}
+.progress-label {
+text-align: center;
+font-size: 0.8rem;
+color: var(--text-light);
+margin-top: 0.4rem;
+}
+.container {
+max-width: 900px;
+margin: 1.5rem auto;
+padding: 0 1rem;
+}
+.module {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 10px;
+margin-bottom: 1.25rem;
+overflow: hidden;
+box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.module-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 1rem 1.25rem;
+cursor: pointer;
+user-select: none;
+transition: background 0.15s;
+}
+.module-header:hover {
+background: #f1f5f9;
+}
+.module-title {
+font-size: 1rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.module-badge {
+font-size: 0.7rem;
+font-weight: 600;
+padding: 0.15rem 0.5rem;
+border-radius: 9999px;
+color: #fff;
+}
+.badge-done { background: var(--done); }
+.badge-ip { background: var(--in-progress); }
+.badge-ns { background: var(--not-started); }
+.module-meta {
+font-size: 0.75rem;
+color: var(--text-light);
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.chevron {
+transition: transform 0.2s;
+font-size: 1.1rem;
+color: var(--text-light);
+}
+.chevron.open {
+transform: rotate(180deg);
+}
+.task-list {
+display: none;
+border-top: 1px solid var(--border);
+}
+.task-list.open {
+display: block;
+}
+.task {
+display: flex;
+align-items: flex-start;
+gap: 0.75rem;
+padding: 0.7rem 1.25rem;
+border-bottom: 1px solid #f1f5f9;
+font-size: 0.88rem;
+}
+.task:last-child {
+border-bottom: none;
+}
+.task-status {
+flex-shrink: 0;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.65rem;
+margin-top: 2px;
+}
+.status-done {
+background: var(--done);
+color: #fff;
+}
+.status-ip {
+background: var(--in-progress);
+color: #fff;
+}
+.status-ns {
+background: #e2e8f0;
+color: #94a3b8;
+}
+.task-text {
+flex: 1;
+}
+.task-text.done {
+text-decoration: line-through;
+color: var(--text-light);
+}
+.task-note {
+font-size: 0.75rem;
+color: var(--text-light);
+margin-top: 0.15rem;
+}
+.footer {
+text-align: center;
+padding: 2rem 1rem;
+font-size: 0.75rem;
+color: var(--text-light);
+}
+@media (max-width: 600px) {
+.header h1 { font-size: 1.3rem; }
+.summary-bar { gap: 0.75rem; }
+.summary-item { font-size: 0.78rem; }
+.logout-btn { position: static; transform: none; margin-top: 0.5rem; display: block; }
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  "@id": "https://handyman.ae/#business",
+  "name": "Handyman.ae",
+  "alternateName": "Handyman & Maintenance Dubai",
+  "foundingDate": "2016",
+  "telephone": "+971585836342",
+  "email": "info@handyman.ae",
+  "url": "https://handyman.ae",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Dubai",
+    "addressRegion": "Dubai",
+    "addressCountry": "AE"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "25.2048",
+    "longitude": "55.2708"
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": "Dubai"
+  },
+  "description": "Handyman.ae is a professional maintenance service across 46 Dubai communities. Licensed, insured, background-checked technicians. 5.0 stars, 354+ reviews, 15,000+ jobs since 2016. Same-day service available 24/7 including emergencies and holidays.",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5.0",
+    "reviewCount": "354",
+    "bestRating": "5"
+  },
+  "sameAs": [
+    "https://maps.app.goo.gl/handymanae",
+    "https://www.instagram.com/handyman.ae/"
+  ]
+}
+</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"HomeAndConstructionBusiness","@id":"https://handyman.ae/#business","name":"Handyman.ae","alternateName":"Handyman & Maintenance Dubai","foundingDate":"2016","telephone":"+971585836342","email":"info@handyman.ae","url":"https://handyman.ae","openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"00:00","closes":"23:59"},"address":{"@type":"PostalAddress","addressLocality":"Dubai","addressRegion":"Dubai","addressCountry":"AE"},"geo":{"@type":"GeoCoordinates","latitude":"25.2048","longitude":"55.2708"},"areaServed":{"@type":"City","name":"Dubai"},"description":"Handyman.ae is a professional maintenance service across 46 Dubai communities. Licensed, insured, background-checked technicians. 5.0 stars, 354+ reviews, 15,000+ jobs since 2016. Same-day service available 24/7 including emergencies and holidays.","aggregateRating":{"@type":"AggregateRating","ratingValue":"5.0","reviewCount":"354","bestRating":"5"},"sameAs":["https://maps.app.goo.gl/handymanae","https://www.instagram.com/handyman.ae/"]}</script></head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <h2>Handyman.ae</h2>
+      <p>Execution Tracker — Restricted Access</p>
+    </div>
+    <div class="login-field">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label for="login-pass">Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="login-btn" onclick="doLogin">Sign In</button>
+    <div class="login-error" id="login-error">Incorrect email or password.</div>
+  </div>
+</div>
+
+<!-- ── TRACKER SCREEN ── -->
+<div id="tracker-screen">
+
+<div class="header" style="position:relative;">
+<h1>Handyman.ae — Execution Tracker</h1>
+<p>Agent Execution Document — Task Status Overview</p>
+<button class="logout-btn" onclick="doLogout">Sign Out</button>
+</div>
+
+<div class="summary-bar">
+<div class="summary-item"><span class="dot dot-done"></span> <span id="count-done">0</span> Done</div>
+<div class="summary-item"><span class="dot dot-ip"></span> <span id="count-ip">0</span> In Progress</div>
+<div class="summary-item"><span class="dot dot-ns"></span> <span id="count-ns">0</span> Not Started</div>
+<div class="summary-item" style="color:var(--accent);"><span id="count-total">0</span> Total Tasks</div>
+</div>
+
+<div class="progress-container">
+<div class="progress-bar-bg">
+<div class="progress-bar-fill" id="progress-fill" style="width:0%; background: linear-gradient(90deg, var(--done), #22d3ee);"></div>
+</div>
+<div class="progress-label" id="progress-label">0% complete</div>
+</div>
+
+<div class="container" id="modules-container"></div>
+
+<div class="footer">
+Last updated: 14 April 2026 &nbsp;|&nbsp; Handyman.ae Execution Tracker &nbsp;|&nbsp; Confidential
+</div>
+
+</div><!-- /#tracker-screen -->
+
+<script>
+// ── Auth ──────────────────────────────────────────────
+const AUTH_KEY = 'hae_tracker_auth';
+const VALID_EMAIL = 'kstone.gulf@gmail.com';
+const VALID_PASS  = 'Manus!23$';
+
+function checkAuth {
+  if (localStorage.getItem(AUTH_KEY) === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('tracker-screen').style.display = 'block';
+    init;
+  }
+}
+
+function doLogin {
+  const email = document.getElementById('login-email').value.trim.toLowerCase;
+  const pass  = document.getElementById('login-pass').value;
+  if (email === VALID_EMAIL && pass === VALID_PASS) {
+    localStorage.setItem(AUTH_KEY, '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('tracker-screen').style.display = 'block';
+    init;
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function doLogout {
+  localStorage.removeItem(AUTH_KEY);
+  location.reload;
+}
+
+// Allow Enter key on password field
+document.addEventListener('DOMContentLoaded',  => {
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin;
+  });
+  document.getElementById('login-email').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-pass').focus;
+  });
+  checkAuth;
+});
+
+// ── Tracker Data ──────────────────────────────────────
+const modules = [
+{
+id: 1,
+title: "Module 1 — Context & Brand Facts",
+tasks: [
+{ text: "Read and memorize business identity, service areas, and full service list (33 services)", status: "done", note: "Reference module — always active" }
+]
+},
+{
+id: 2,
+title: "Module 2 — GMB Profile: Complete Setup",
+tasks: [
+{ text: "Login & identify both GMB profiles (Primary + Legacy)", status: "not-started" },
+{ text: "Update hours to 24/7 on BOTH profiles", status: "not-started" },
+{ text: "Set all categories on both profiles (Primary + 8 secondary)", status: "not-started" },
+{ text: "Update business description (exact 747-char copy) on both profiles", status: "not-started" },
+{ text: "Add all services individually in GMB services section (all categories)", status: "not-started" },
+{ text: "Seed all 10 Q&A questions and answers on GMB", status: "not-started" },
+{ text: "Enable all GMB attributes (service options, planning, payments, highlights)", status: "not-started" },
+{ text: "Update website URL to handyman.ae on both profiles", status: "not-started" },
+{ text: "Upload 60+ geo-tagged photos with proper naming convention", status: "not-started" },
+{ text: "GBP posts running on both profiles via Publer", status: "done", note: "Automated posting active" }
+]
+},
+{
+id: 3,
+title: "Module 3 — Review Responses",
+tasks: [
+{ text: "Respond to all 262 existing reviews using service-specific templates", status: "not-started" },
+{ text: "Post personalized responses for 10 named reviews (Khaldoun, Jawad, Jahangir, etc.)", status: "not-started" },
+{ text: "Reply to 5 new reviews (Selime, Sergey, Pedro, Alireza, Prathamesh)", status: "done", note: "Posted Apr 13" }
+]
+},
+{
+id: 4,
+title: "Module 4 — Website: Technical Fixes & Schema",
+tasks: [
+{ text: "Deploy 222 pre-rendered static HTML pages", status: "done", note: "Deployed" },
+{ text: "Add GSC meta tag", status: "done", note: "Verified" },
+{ text: "GSC verified, sitemap submitted, homepage indexing requested", status: "done", note: "Complete" },
+{ text: "Add homepage JSON-LD schema (HomeAndConstructionBusiness) to <head>", status: "not-started" },
+{ text: "Add meta descriptions to all service pages", status: "not-started" },
+{ text: "Verify & update title tags on all pages", status: "not-started" },
+{ text: "Update operating hours sitewide to 24/7", status: "in-progress", note: "Being deployed" },
+{ text: "Add FAQPage schema to all service pages", status: "not-started" }
+]
+},
+{
+id: 5,
+title: "Module 5 — Blog Content: 16-Post Schedule",
+tasks: [
+{ text: "Blog 1: Why Is My AC Not Cooling in Dubai? 7 Real Causes", status: "done" },
+{ text: "Blog 2: How Much Does AC Repair Cost in Dubai? Full Price Guide 2026", status: "done" },
+{ text: "Blog 3: IKEA Assembly in Dubai: Why a Professional Saves Your Sanity", status: "done" },
+{ text: "Blog 4: Emergency Plumber Dubai: What to Do When Pipes Burst", status: "done" },
+{ text: "Blog 5: Best Handyman Services in Dubai: Complete Guide 2026", status: "done" },
+{ text: "Blog 6: TV Mounting in Dubai: Gypsum Wall vs Concrete", status: "done" },
+{ text: "Blog 7: Dubai Home Maintenance Checklist 2026", status: "done" },
+{ text: "Blog 8: End of Tenancy Painting Dubai: Get Your Full Deposit Back", status: "done" },
+{ text: "Blog 9: Plumber Dubai Prices: What Does a Plumber Cost in 2026?", status: "done" },
+{ text: "Blog 10: Curtain Installation Dubai: Rods, Tracks, Motorized", status: "done" },
+{ text: "Blog 11: How Often Should You Service Your AC in Dubai?", status: "not-started" },
+{ text: "Blog 12: Annual Maintenance Contracts in Dubai: Are They Worth It?", status: "not-started" },
+{ text: "Blog 13: Electrician Dubai Prices 2026", status: "not-started" },
+{ text: "Blog 14: Smart Home Installation Dubai: Worth It in 2026?", status: "not-started" },
+{ text: "Blog 15: Mold in Dubai Apartments: Causes, Dangers, and Fixes", status: "not-started" },
+{ text: "Blog 16: Move-In Checklist Dubai: Everything Before You Unpack", status: "not-started" }
+]
+},
+{
+id: 6,
+title: "Module 6 — Directory & Citation Submissions",
+tasks: [
+{ text: "Submit to Yandex", status: "done", note: "Submitted" },
+{ text: "Submit to WebSub", status: "done", note: "Submitted" },
+{ text: "Submit to Ping services", status: "done", note: "Submitted" },
+{ text: "Submit to Yello.ae", status: "not-started" },
+{ text: "Submit to Dubizzle Services", status: "not-started" },
+{ text: "Submit to Bayut Home Services", status: "not-started" },
+{ text: "Submit to UAE Yellow Pages", status: "not-started" },
+{ text: "Submit to Houzz UAE", status: "not-started" },
+{ text: "Submit to Yelp UAE", status: "not-started" },
+{ text: "Submit to ManualDirectory.ae", status: "not-started" },
+{ text: "Submit to Dubai Directory", status: "not-started" },
+{ text: "Submit to UAE Business Directory", status: "not-started" },
+{ text: "Submit to GIS (Gulf Info Systems)", status: "not-started" },
+{ text: "Submit to Justdial UAE", status: "not-started" },
+{ text: "Submit to Foursquare / Swarm", status: "not-started" },
+{ text: "Submit to Apple Maps Connect", status: "not-started" },
+{ text: "Submit to Waze Business", status: "not-started" },
+{ text: "Submit to Quora (create account + answer 2/week)", status: "not-started" },
+{ text: "Submit to Reddit r/dubai & r/DubaiExpats", status: "not-started" },
+{ text: "Submit to Trustpilot", status: "not-started" },
+{ text: "Submit to Clutch.co", status: "not-started" },
+{ text: "Submit to Bark.com", status: "not-started" }
+]
+},
+{
+id: 7,
+title: "Module 7 — Social Media: Content Calendar",
+tasks: [
+{ text: "Update Instagram bio to Handyman.ae branding", status: "not-started" },
+{ text: "Schedule Week 1 content (3 Instagram + 3 Facebook posts)", status: "not-started" },
+{ text: "Schedule Week 2 content (3 Instagram + 3 Facebook posts)", status: "not-started" },
+{ text: "Schedule Week 3 content (3 Instagram + 3 Facebook posts)", status: "not-started" },
+{ text: "Schedule Week 4 content (3 Instagram + 3 Facebook posts)", status: "not-started" },
+{ text: "Set up hashtag rotation system (5 sets)", status: "not-started" }
+]
+},
+{
+id: 8,
+title: "Module 8 — WhatsApp Automation",
+tasks: [
+{ text: "Set up post-job review request automation (T+45 min + 72hr follow-up)", status: "not-started" },
+{ text: "Set up incoming WhatsApp booking bot response sequence", status: "not-started" },
+{ text: "Set up AMC upsell outreach for customers 90+ days since last job", status: "not-started" }
+]
+},
+{
+id: 9,
+title: "Module 9 — AEO Pages (AI Engine Optimization)",
+tasks: [
+{ text: "Create page: Best Handyman in Dubai — Complete Guide 2026", status: "not-started" },
+{ text: "Create page: Handyman Prices in Dubai — Complete Pricing Guide 2026", status: "not-started" },
+{ text: "Create page: 24/7 Emergency Handyman Dubai", status: "not-started" },
+{ text: "Create page: Dubai Home Maintenance — Complete Resident's Guide", status: "not-started" }
+]
+},
+{
+id: 10,
+title: "Module 10 — Competitor Intelligence",
+tasks: [
+{ text: "Analyze HMSD gaps (reviews, hours, attributes, micro-pages)", status: "done", note: "Analysis complete" },
+{ text: "Analyze wewillfixit.com organic ranking gaps", status: "not-started" },
+{ text: "Set up Google Posts templates (4x/week rotation)", status: "done", note: "GBP posts improved via Publer" },
+{ text: "Close gap: Add 'Women-owned' attribute if applicable", status: "not-started" },
+{ text: "Close gap: Create dedicated micro-service pages (Drilling, Hanging, Frame, Blind)", status: "not-started" },
+{ text: "Close gap: Target editorial backlinks (Bayut, Property Finder, Gulf News)", status: "not-started" }
+]
+},
+{
+id: 11,
+title: "Module 11 — Monthly Operating Checklist",
+tasks: [
+{ text: "Set up daily tasks automation (review monitoring, WhatsApp, Q&A, photo posting)", status: "not-started" },
+{ text: "Set up weekly tasks workflow (blog, GMB posts, social, AMC upsell, Quora)", status: "not-started" },
+{ text: "Set up monthly tasks workflow (LLM audit, citations, rankings, PR, reporting)", status: "not-started" },
+{ text: "GBP posting cadence set up via Publer", status: "done", note: "252 posts scheduled through May 23" },
+{ text: "Daily blog automation", status: "in-progress", note: "2 posts/day automated" }
+]
+}
+];
+
+function init {
+const container = document.getElementById('modules-container');
+let totalDone = 0, totalIP = 0, totalNS = 0, totalAll = 0;
+
+modules.forEach(mod => {
+const modEl = document.createElement('div');
+modEl.className = 'module';
+
+let doneCount = 0, ipCount = 0, nsCount = 0;
+mod.tasks.forEach(t => {
+if (t.status === 'done') doneCount++;
+else if (t.status === 'in-progress') ipCount++;
+else nsCount++;
+});
+totalDone += doneCount;
+totalIP += ipCount;
+totalNS += nsCount;
+totalAll += mod.tasks.length;
+
+let modStatus = 'ns';
+let modBadgeText = 'Not Started';
+if (doneCount === mod.tasks.length) { modStatus = 'done'; modBadgeText = 'Complete'; }
+else if (doneCount > 0 || ipCount > 0) { modStatus = 'ip'; modBadgeText = doneCount + '/' + mod.tasks.length; }
+
+const header = document.createElement('div');
+header.className = 'module-header';
+header.innerHTML = `
+<div class="module-title">
+<span class="module-badge badge-${modStatus}">${modBadgeText}</span>
+${mod.title}
+</div>
+<div class="module-meta">
+<span>${mod.tasks.length} tasks</span>
+<span class="chevron">&#9660;</span>
+</div>
+`;
+
+const taskList = document.createElement('div');
+taskList.className = 'task-list';
+
+mod.tasks.forEach(t => {
+const taskEl = document.createElement('div');
+taskEl.className = 'task';
+let icon = '';
+let statusClass = '';
+let textClass = '';
+if (t.status === 'done') {
+icon = '&#10003;';
+statusClass = 'status-done';
+textClass = 'done';
+} else if (t.status === 'in-progress') {
+icon = '&#9679;';
+statusClass = 'status-ip';
+} else {
+icon = '';
+statusClass = 'status-ns';
+}
+taskEl.innerHTML = `
+<div class="task-status ${statusClass}">${icon}</div>
+<div class="task-text ${textClass}">
+${t.text}
+${t.note ? '<div class="task-note">' + t.note + '</div>' : ''}
+</div>
+`;
+taskList.appendChild(taskEl);
+});
+
+header.addEventListener('click',  => {
+taskList.classList.toggle('open');
+header.querySelector('.chevron').classList.toggle('open');
+});
+
+modEl.appendChild(header);
+modEl.appendChild(taskList);
+container.appendChild(modEl);
+});
+
+document.getElementById('count-done').textContent = totalDone;
+document.getElementById('count-ip').textContent = totalIP;
+document.getElementById('count-ns').textContent = totalNS;
+document.getElementById('count-total').textContent = totalAll;
+
+const pct = Math.round((totalDone / totalAll) * 100);
+document.getElementById('progress-fill').style.width = pct + '%';
+document.getElementById('progress-label').textContent = pct + '% complete (' + totalDone + ' of ' + totalAll + ' tasks done)';
+}
+</script>
+
+</body>
+</html>

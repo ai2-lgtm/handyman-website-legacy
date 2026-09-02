@@ -1,0 +1,78 @@
+# Handyman.ae - Pre-rendered Static Site Configuration
+# Generated: 2026-04-07
+
+# Enable RewriteEngine
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Force www to non-www (or vice versa - keeping non-www as canonical)
+RewriteCond %{HTTP_HOST} ^www\.handyman\.ae [NC]
+RewriteRule ^(.*)$ https://handyman.ae/$1 [L,R=301]
+
+# Remove trailing slash for files (but keep for directories)
+# This ensures /services/ac-repair/ works by serving /services/ac-repair/index.html
+
+# If the request is for a directory, serve its index.html
+DirectoryIndex index.html
+
+# Handle clean URLs - if request doesn't have extension and isn't a real file/dir
+# Serve the corresponding index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.
+RewriteRule ^(.+?)/?$ /$1/index.html [L]
+
+# Ensure trailing slash for directories
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.*)$ /$1/ [L,R=301]
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE text/xml
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Custom 404
+ErrorDocument 404 /404/index.html
+
+# MIME types
+AddType application/javascript .js
+AddType text/css .css
+AddType image/webp .webp
+AddType image/svg+xml .svg
+AddType application/json .json
+AddType application/xml .xml

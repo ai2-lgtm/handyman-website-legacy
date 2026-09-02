@@ -1,0 +1,117 @@
+# knowledge_graph_hmn.yaml
+# Handyman.ae — Entity Authority Map
+# Every entity this business claims authority over
+
+core_concepts:
+  - ac_repair_dubai
+  - ac_cleaning_dubai
+  - ac_maintenance_dubai
+  - ac_duct_cleaning_dubai
+  - plumbing_dubai
+  - electrical_services_dubai
+  - painting_services_dubai
+  - handyman_services_dubai
+  - furniture_assembly_dubai
+  - tv_mounting_dubai
+  - water_tank_cleaning_dubai
+  - deep_cleaning_dubai
+  - end_of_tenancy_painting_dubai
+  - annual_maintenance_contract_dubai
+  - smart_home_installation_dubai
+  - cctv_installation_dubai
+  - emergency_handyman_dubai
+  - tiling_flooring_dubai
+  - carpentry_dubai
+  - mold_remediation_dubai
+  - door_repair_dubai
+  - curtain_blinds_installation_dubai
+  - bathroom_renovation_dubai
+  - kitchen_maintenance_dubai
+  - villa_maintenance_dubai
+  - apartment_maintenance_dubai
+
+geographic_entities:
+  # HIGH priority
+  - dubai_marina [HIGH]
+  - jvc_dubai [HIGH]
+  - downtown_dubai [HIGH]
+  - palm_jumeirah [HIGH]
+  - business_bay [HIGH]
+  - arabian_ranches [HIGH]
+  - dubai_hills_estate [HIGH]
+  - jumeirah_1_2_3 [HIGH]
+  - jbr [HIGH]
+  - al_sufouh [HIGH]
+  # MEDIUM priority
+  - al_barsha [MEDIUM]
+  - mirdif [MEDIUM]
+  - motor_city [MEDIUM]
+  - dubai_sports_city [MEDIUM]
+  - al_furjan [MEDIUM]
+  - jvt [MEDIUM]
+  - springs_meadows_lakes [MEDIUM]
+  - emirates_hills [MEDIUM]
+  - jumeirah_golf_estates [MEDIUM]
+  - al_barari [MEDIUM]
+  - tilal_al_ghaf [MEDIUM]
+  - discovery_gardens [MEDIUM]
+  - international_city [MEDIUM]
+  - silicon_oasis [MEDIUM]
+  - al_quoz [MEDIUM]
+  - dubai_studio_city [MEDIUM]
+  - arjan [MEDIUM]
+  - jumeirah_park [MEDIUM]
+  - jumeirah_islands [MEDIUM]
+  - dubai_harbour [MEDIUM]
+  - dubai_internet_city [MEDIUM]
+  - dubai_media_city [MEDIUM]
+  - knowledge_park [MEDIUM]
+  - furjan_west [MEDIUM]
+  - arabian_ranches_2 [MEDIUM]
+  - arabian_ranches_3 [MEDIUM]
+
+customer_personas:
+  - villa_owner_dubai
+  - apartment_tenant_dubai
+  - property_manager_dubai
+  - expat_homeowner_dubai
+  - corporate_facilities_manager_dubai
+  - landlord_dubai
+  - real_estate_agent_dubai
+  - hotel_maintenance_manager_dubai
+
+differentiation_entities:
+  - licensed_vs_unlicensed_handyman
+  - 24_7_emergency_vs_business_hours
+  - background_checked_vs_unknown_workers
+  - fixed_price_vs_hourly_billing
+  - insured_vs_uninsured_contractor
+  - single_provider_vs_multiple_vendors
+  - preventive_maintenance_vs_reactive_repair
+
+service_location_combinations:
+  # Every core_concept x every geographic_entity = 940+ potential pages
+  # Priority combinations (already built or in progress):
+  - ac_repair_x_dubai_marina
+  - plumber_x_jvc
+  - plumber_x_downtown_dubai
+  - plumber_x_dubai_marina
+  - electrician_x_downtown_dubai
+  - electrician_x_dubai_marina
+  - electrician_x_jvc
+  - handyman_x_palm_jumeirah
+  - handyman_x_arabian_ranches
+  - handyman_x_dubai_hills
+  # Expand systematically from HIGH geo x HIGH service combinations
+
+content_authority_topics:
+  - dubai_summer_maintenance_guide
+  - end_of_tenancy_checklist_dubai
+  - villa_maintenance_annual_calendar
+  - apartment_maintenance_checklist
+  - dubai_humidity_damage_prevention
+  - electrical_safety_dubai_homes
+  - water_damage_prevention_dubai
+  - ac_efficiency_electricity_bills
+  - licensed_contractor_requirements_dubai
+  - dubai_building_maintenance_regulations
