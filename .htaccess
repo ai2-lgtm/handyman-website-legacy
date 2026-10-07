@@ -21,6 +21,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteCond %{HTTP_HOST} ^www\.handyman\.ae [NC]
 RewriteRule ^(.*)$ https://handyman.ae/$1 [L,R=301]
 
+# Thin duplicate of the homepage - redirect to /
+RewriteRule ^handyman-services-dubai/?$ https://handyman.ae/ [L,R=301]
+
 # Add trailing slash for directories
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteCond %{REQUEST_URI} !/$
